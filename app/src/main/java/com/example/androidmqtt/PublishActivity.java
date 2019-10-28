@@ -29,6 +29,9 @@ public class PublishActivity extends AppCompatActivity {
     String host;
     String toggleOn = "ON";
     String toggleOff = "OFF";
+    private ToggleButton toggleBtn;
+    private EditText payload;
+    private TextView dataReceivedTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,10 @@ public class PublishActivity extends AppCompatActivity {
         setContentView(R.layout.activity_publish);
         Button subBtn = (Button) findViewById(R.id.subBtn);
         Button pushBtn = (Button) findViewById(R.id.pushBtn);
-        final ToggleButton toggleBtn = (ToggleButton) findViewById(R.id.toggleBtn);
-        final EditText payload = (EditText) findViewById(R.id.payloadEditText);
-        final TextView dataReceivedTextView = (TextView) findViewById(R.id.dataReceivedTextView);
+        toggleBtn = (ToggleButton) findViewById(R.id.toggleBtn);
+        payload = (EditText) findViewById(R.id.payloadEditText);
+        dataReceivedTextView = (TextView) findViewById(R.id.dataReceivedTextView);
+        Button tempBtn = (Button) findViewById(R.id.tempBtn);
         Boolean connectionDone = false;
 
         if (getIntent().hasExtra("username")) {
@@ -63,17 +67,13 @@ public class PublishActivity extends AppCompatActivity {
         host = host + ":" + port;
         final MqttAndroidClient client = new MqttAndroidClient(PublishActivity.this, host, clientId);
         final MqttHelper helperMqtt = new MqttHelper(PublishActivity.this, clientId, host, username, password, port, subTopic, pubTopic);
-        try {
-            helperMqtt.connectToMQTTBroker(PublishActivity.this, host, username, password, client);
-            connectionDone = true;
-        }
-        catch(Exception e)
-        {
-        }
-        if(connectionDone)
-        {
-            helperMqtt.subscribeToProvidedTopic(PublishActivity.this, subTopic, client);
-        }
+        helperMqtt.connectToMQTTBroker(PublishActivity.this, host, username, password, client);
+        tempBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                helperMqtt.publishMessage("TEM", client, pubTopic);
+            }
+        });
         subBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,7 +134,7 @@ public class PublishActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View view) {
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(PublishActivity.this);
-                 final View mView = getLayoutInflater().inflate(R.layout.set_toggle_values, null);
+                final View mView = getLayoutInflater().inflate(R.layout.set_toggle_values, null);
                 final EditText etToggleOn = (EditText) mView.findViewById(R.id.editTextToggleOn);
                 final EditText etToggleOff = (EditText) mView.findViewById(R.id.editTextToggleOff);
                 Button setValuesBtn = (Button)  mView.findViewById(R.id.setToggleValuesBtn);

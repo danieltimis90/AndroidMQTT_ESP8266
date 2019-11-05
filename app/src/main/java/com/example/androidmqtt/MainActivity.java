@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ConnectionClass sqlConnect;
     private EditText editTextEmail;
     private EditText editTextPassword;
     private Button btnLogin;
